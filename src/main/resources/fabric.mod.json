@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "eterniamod",
+	"version": "${version}",
+	"name": "eterniamod",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/eterniamod/icon.png",
+	"environment": "server",
+	"entrypoints": {
+		"main": [
+			"n1zen.eterniamod.Eterniamod"
+		],
+		"server": [
+			"n1zen.eterniamod.EterniamodServer"
+		],
+		"client": [
+			"n1zen.eterniamod.client.EterniamodClient"
+		],
+		"fabric-datagen": [
+			"n1zen.eterniamod.client.EterniamodDataGenerator"
+		]
+	},
+	"mixins": [
+		"eterniamod.mixins.json",
+		{
+			"config": "eterniamod.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
