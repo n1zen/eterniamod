@@ -1,6 +1,7 @@
 package n1zen.eterniamod.commands.skills.admin;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import n1zen.eterniamod.commands.utils.CommandUtils;
@@ -33,12 +34,12 @@ public class AddXp {
                                 .suggests(CommandUtils::getCompletePlayers)
                                 .then(Commands.argument("skill", StringArgumentType.word())
                                         .suggests(CommandUtils::getCompleteSkillTypes)
-                                        .then(Commands.argument("amount", IntegerArgumentType.integer())
+                                        .then(Commands.argument("amount", DoubleArgumentType.doubleArg())
                                                 .executes(context -> {
                                                     try {
                                                         ServerPlayer player = EntityArgument.getPlayer(context, "player");
                                                         String skillArgs =  StringArgumentType.getString(context, "skill");
-                                                        int amount =  IntegerArgumentType.getInteger(context, "amount");
+                                                        double amount =  DoubleArgumentType.getDouble(context, "amount");
                                                         PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
 
                                                         UUID playerUUID = player.getUUID();
