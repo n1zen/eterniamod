@@ -1,4 +1,4 @@
-package n1zen.eterniamod.commands.skills;
+package n1zen.eterniamod.commands.skills.exp;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -26,7 +26,7 @@ public class ShowSpecificSkillExpOther {
                                             String skillArgs =  StringArgumentType.getString(context, "skill");
 
                                             if(skillArgs.equals("all")) {
-                                                showAllSkillExp(context, playerSkillXpState, player);
+                                                showAllSkill(context, playerSkillXpState, player);
                                                 return 1;
                                             }
 
@@ -34,7 +34,7 @@ public class ShowSpecificSkillExpOther {
                                             skillType = validateSkillType(context, skillArgs);
                                             if(skillType == null) return 0;
 
-                                            showSpecificSkillExp(context, playerSkillXpState, player, skillType);
+                                            showSpecificSkill(context, playerSkillXpState, player, skillType);
                                             return 1;
                                         })
                                 )

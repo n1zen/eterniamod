@@ -1,22 +1,22 @@
-package n1zen.eterniamod.commands.skills;
+package n1zen.eterniamod.commands.skills.level;
 
 import com.mojang.brigadier.CommandDispatcher;
-import n1zen.eterniamod.skills.PlayerSkillXpState;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 
-import static n1zen.eterniamod.commands.utils.CommandUtils.showAllSkillExp;
+import static n1zen.eterniamod.commands.utils.CommandUtils.showAllSkill;
 
-public class ShowAllSkillExpSelf {
+public class ShowAllSkillLevelSelf {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skills")
-                .then(Commands.literal("exp")
+                .then(Commands.literal("level")
                         .executes(context -> {
                             ServerPlayer player = context.getSource().getPlayerOrException();
-                            PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
+                            PlayerSkillLevelState playerSkillLevelState = PlayerSkillLevelState.get(player.level());
 
-                            showAllSkillExp(context, playerSkillXpState, player);
+                            showAllSkill(context, playerSkillLevelState, player);
 
                             return 1;
                         })

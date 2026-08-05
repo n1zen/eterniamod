@@ -1,9 +1,9 @@
-package n1zen.eterniamod.commands.skills;
+package n1zen.eterniamod.commands.skills.level;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import n1zen.eterniamod.commands.utils.CommandUtils;
-import n1zen.eterniamod.skills.PlayerSkillXpState;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.SkillType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import static n1zen.eterniamod.commands.utils.CommandUtils.*;
 
-public class ShowSpecificSkillExpSelf {
+public class ShowSpecificSkillLevelSelf {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skills")
                 .then(Commands.literal("exp")
@@ -20,10 +20,10 @@ public class ShowSpecificSkillExpSelf {
                                 .executes(context -> {
                                     ServerPlayer player = context.getSource().getPlayer();
                                     String skillArgs = StringArgumentType.getString(context, "skill");
-                                    PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
+                                    PlayerSkillLevelState playerSkillLevelState = PlayerSkillLevelState.get(player.level());
 
                                     if(skillArgs.equals("all")) {
-                                        showAllSkillExp(context, playerSkillXpState, player);
+                                        showAllSkill(context, playerSkillLevelState, player);
                                         return 1;
                                     }
 
@@ -31,7 +31,7 @@ public class ShowSpecificSkillExpSelf {
                                     skillType = validateSkillType(context, skillArgs);
                                     if (skillType == null) return 0;
 
-                                    showSpecificSkillExp(context, playerSkillXpState, player, skillType);
+                                    showSpecificSkill(context, playerSkillLevelState, player, skillType);
                                     return 1;
                                 })
                         )
