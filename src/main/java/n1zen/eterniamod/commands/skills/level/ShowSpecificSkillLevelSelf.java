@@ -14,7 +14,7 @@ import static n1zen.eterniamod.commands.utils.CommandUtils.*;
 public class ShowSpecificSkillLevelSelf {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skills")
-                .then(Commands.literal("exp")
+                .then(Commands.literal("level")
                         .then(Commands.argument("skill", StringArgumentType.word())
                                 .suggests(CommandUtils::getCompleteSkillTypes)
                                 .executes(context -> {
