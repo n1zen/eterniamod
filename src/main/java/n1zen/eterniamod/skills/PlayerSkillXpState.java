@@ -45,7 +45,7 @@ public class PlayerSkillXpState extends SavedData {
     }
 
     public void removeSkillExp(UUID playerId, SkillType skillType) {
-        Map<SkillType, Double> skillXp = this.playerSkillXp.get(playerId);
+        Map<SkillType, Double> skillXp = this.playerSkillXp.computeIfAbsent(playerId, id -> new HashMap<>());
         skillXp.put(skillType, (double) 0);
         setDirty();
     }

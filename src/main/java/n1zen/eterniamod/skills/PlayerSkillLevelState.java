@@ -20,7 +20,7 @@ public class PlayerSkillLevelState extends SavedData {
     public PlayerSkillLevelState() { this.skillLevelStates = new HashMap<>(); }
 
     public PlayerSkillLevelState(Map<UUID, Map<SkillType, Integer>> skillLevelStates) {
-        this.skillLevelStates = skillLevelStates;
+        this.skillLevelStates = new HashMap<>();
         for(Map.Entry<UUID, Map<SkillType, Integer>> entry : skillLevelStates.entrySet()) {
             this.skillLevelStates.put(entry.getKey(), new HashMap<>(entry.getValue()));
         }
@@ -40,7 +40,7 @@ public class PlayerSkillLevelState extends SavedData {
     }
 
     public void removeSkillLevel(UUID playerUUID, SkillType skill) {
-        Map<SkillType, Integer> skillLevel = this.skillLevelStates.get(playerUUID);
+        Map<SkillType, Integer> skillLevel = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
         skillLevel.put(skill, 0);
         setDirty();
     }
