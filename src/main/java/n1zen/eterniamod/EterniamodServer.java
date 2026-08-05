@@ -1,8 +1,8 @@
 package n1zen.eterniamod;
 
-import n1zen.eterniamod.commands.skills.ShowAllSkillsSelf;
-import n1zen.eterniamod.commands.skills.ShowSpecificSkillsOther;
-import n1zen.eterniamod.commands.skills.ShowSpecificSkillsSelf;
+import n1zen.eterniamod.commands.skills.ShowAllSkillExpSelf;
+import n1zen.eterniamod.commands.skills.ShowSpecificSkillExpOther;
+import n1zen.eterniamod.commands.skills.ShowSpecificSkillExpSelf;
 import n1zen.eterniamod.commands.skills.admin.AddXp;
 import n1zen.eterniamod.commands.skills.admin.ClearXp;
 import net.fabricmc.api.DedicatedServerModInitializer;
@@ -34,13 +34,13 @@ public class EterniamodServer implements DedicatedServerModInitializer {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 
             // Show All Skills of Self
-            ShowAllSkillsSelf.register(dispatcher);
+            ShowAllSkillExpSelf.register(dispatcher);
 
             // Show Specific Skills of Self
-            ShowSpecificSkillsSelf.register(dispatcher);
+            ShowSpecificSkillExpSelf.register(dispatcher);
 
             // Show Specific Skills of Other Players
-            ShowSpecificSkillsOther.register(dispatcher);
+            ShowSpecificSkillExpOther.register(dispatcher);
 
             // Add XP to a player's skill (OP only)
             AddXp.register(dispatcher);

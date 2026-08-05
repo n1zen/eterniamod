@@ -4,7 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import n1zen.eterniamod.commands.utils.CommandUtils;
-import n1zen.eterniamod.skills.PlayerLevelState;
+import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -32,14 +32,14 @@ public class AddXp {
                         .then(Commands.argument("player", EntityArgument.player())
                                 .suggests(CommandUtils::getCompletePlayers)
                                 .then(Commands.argument("skill", StringArgumentType.word())
-                                        .suggests(CommandUtils::getCompleteSkills)
+                                        .suggests(CommandUtils::getCompleteSkillTypes)
                                         .then(Commands.argument("amount", IntegerArgumentType.integer())
                                                 .executes(context -> {
                                                     try {
                                                         ServerPlayer player = EntityArgument.getPlayer(context, "player");
                                                         String skillArgs =  StringArgumentType.getString(context, "skill");
                                                         int amount =  IntegerArgumentType.getInteger(context, "amount");
-                                                        PlayerLevelState playerLevelState = PlayerLevelState.get(player.level());
+                                                        PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
 
                                                         UUID playerUUID = player.getUUID();
                                                         String playerName = player.getName().getString();
@@ -49,9 +49,9 @@ public class AddXp {
                                                                     Component.literal("+" + amount + " XP to all skills")
                                                             );
                                                             for(SkillType skillType :  SkillType.values()) {
-                                                                int prevXp = playerLevelState.getSkillExp(playerUUID, skillType);
-                                                                playerLevelState.addSkillExp(playerUUID, skillType, amount);
-                                                                int xp = playerLevelState.getSkillExp(playerUUID, skillType);
+                                                                double prevXp = playerSkillXpState.getSkillExp(playerUUID, skillType);
+                                                                playerSkillXpState.addSkillExp(playerUUID, skillType, amount);
+                                                                double xp = playerSkillXpState.getSkillExp(playerUUID, skillType);
 
                                                                 player.sendSystemMessage(
                                                                         Component.literal(skillType.name() + " XP: " + prevXp + " -> " + xp)
@@ -70,9 +70,9 @@ public class AddXp {
                                                         skillType = validateSkillType(context, skillArgs);
                                                         if (skillType == null) return 0;
 
-                                                        int prevXp = playerLevelState.getSkillExp(playerUUID, skillType);
-                                                        playerLevelState.addSkillExp(playerUUID, skillType, amount);
-                                                        int xp = playerLevelState.getSkillExp(playerUUID, skillType);
+                                                        double prevXp = playerSkillXpState.getSkillExp(playerUUID, skillType);
+                                                        playerSkillXpState.addSkillExp(playerUUID, skillType, amount);
+                                                        double xp = playerSkillXpState.getSkillExp(playerUUID, skillType);
 
                                                         String message = "Added " + amount + " XP to " + playerName + "'s " +  skillType.name() + " XP";
                                                         context.getSource().sendSuccess(
