@@ -11,14 +11,16 @@ import static n1zen.eterniamod.commands.utils.CommandUtils.showAllSkillExp;
 public class ShowAllSkillExpSelf {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skills")
-                .executes(context -> {
-                    ServerPlayer player = context.getSource().getPlayerOrException();
-                    PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
+                .then(Commands.literal("exp")
+                        .executes(context -> {
+                            ServerPlayer player = context.getSource().getPlayerOrException();
+                            PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
 
-                    showAllSkillExp(context, playerSkillXpState, player);
+                            showAllSkillExp(context, playerSkillXpState, player);
 
-                    return 1;
-                })
+                            return 1;
+                        })
+                )
         );
     }
 }

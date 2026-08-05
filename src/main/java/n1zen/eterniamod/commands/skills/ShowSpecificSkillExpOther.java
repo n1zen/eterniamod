@@ -15,8 +15,9 @@ import static n1zen.eterniamod.commands.utils.CommandUtils.*;
 public class ShowSpecificSkillExpOther {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skills")
-                .then(Commands.argument("skill", StringArgumentType.word())
-                        .suggests(CommandUtils::getCompleteSkillTypes)
+                .then(Commands.literal("exp")
+                        .then(Commands.argument("skill", StringArgumentType.word())
+                                .suggests(CommandUtils::getCompleteSkillTypes)
                                 .then(Commands.argument("player", EntityArgument.player())
                                         .suggests(CommandUtils::getCompletePlayers)
                                         .executes(context -> {
@@ -37,6 +38,7 @@ public class ShowSpecificSkillExpOther {
                                             return 1;
                                         })
                                 )
+                        )
                 )
         );
     }

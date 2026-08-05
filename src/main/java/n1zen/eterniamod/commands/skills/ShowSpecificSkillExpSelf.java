@@ -14,25 +14,27 @@ import static n1zen.eterniamod.commands.utils.CommandUtils.*;
 public class ShowSpecificSkillExpSelf {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skills")
-                .then(Commands.argument("skill", StringArgumentType.word())
-                        .suggests(CommandUtils::getCompleteSkillTypes)
-                        .executes(context -> {
-                            ServerPlayer player = context.getSource().getPlayer();
-                            String skillArgs = StringArgumentType.getString(context, "skill");
-                            PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
+                .then(Commands.literal("exp")
+                        .then(Commands.argument("skill", StringArgumentType.word())
+                                .suggests(CommandUtils::getCompleteSkillTypes)
+                                .executes(context -> {
+                                    ServerPlayer player = context.getSource().getPlayer();
+                                    String skillArgs = StringArgumentType.getString(context, "skill");
+                                    PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
 
-                            if(skillArgs.equals("all")) {
-                                showAllSkillExp(context, playerSkillXpState, player);
-                                return 1;
-                            }
+                                    if(skillArgs.equals("all")) {
+                                        showAllSkillExp(context, playerSkillXpState, player);
+                                        return 1;
+                                    }
 
-                            SkillType skillType;
-                            skillType = validateSkillType(context, skillArgs);
-                            if (skillType == null) return 0;
+                                    SkillType skillType;
+                                    skillType = validateSkillType(context, skillArgs);
+                                    if (skillType == null) return 0;
 
-                            showSpecificSkillExp(context, playerSkillXpState, player, skillType);
-                            return 1;
-                        })
+                                    showSpecificSkillExp(context, playerSkillXpState, player, skillType);
+                                    return 1;
+                                })
+                        )
                 )
         );
     }
