@@ -1,10 +1,15 @@
 package n1zen.eterniamod;
 
-import n1zen.eterniamod.commands.skills.ShowAllSkillsSelf;
-import n1zen.eterniamod.commands.skills.ShowSpecificSkillsOther;
-import n1zen.eterniamod.commands.skills.ShowSpecificSkillsSelf;
+import n1zen.eterniamod.commands.skills.admin.AddLvl;
+import n1zen.eterniamod.commands.skills.admin.ClearLvl;
+import n1zen.eterniamod.commands.skills.exp.ShowAllSkillExpSelf;
+import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpOther;
+import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpSelf;
 import n1zen.eterniamod.commands.skills.admin.AddXp;
 import n1zen.eterniamod.commands.skills.admin.ClearXp;
+import n1zen.eterniamod.commands.skills.level.ShowAllSkillLevelSelf;
+import n1zen.eterniamod.commands.skills.level.ShowSpecificSkillLevelOther;
+import n1zen.eterniamod.commands.skills.level.ShowSpecificSkillLevelSelf;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -23,30 +28,34 @@ public class EterniamodServer implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
 
-        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
-            LOGGER.info("Eterniamod initializing...");
-        });
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("Eterniamod initializing..."));
 
-        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            LOGGER.info("Eterniamod has been initialized!");
-        });
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> LOGGER.info("Eterniamod has been initialized!"));
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 
             // Show All Skills of Self
-            ShowAllSkillsSelf.register(dispatcher);
+            ShowAllSkillExpSelf.register(dispatcher);
+            ShowAllSkillLevelSelf.register(dispatcher);
 
             // Show Specific Skills of Self
-            ShowSpecificSkillsSelf.register(dispatcher);
+            ShowSpecificSkillExpSelf.register(dispatcher);
+            ShowSpecificSkillLevelSelf.register(dispatcher);
 
             // Show Specific Skills of Other Players
-            ShowSpecificSkillsOther.register(dispatcher);
+            ShowSpecificSkillExpOther.register(dispatcher);
+            ShowSpecificSkillLevelOther.register(dispatcher);
 
             // Add XP to a player's skill (OP only)
             AddXp.register(dispatcher);
+            // Add Lvls to a player's skill (OP only)
+            AddLvl.register(dispatcher);
 
             // Clear skill xp of a player (OP only)
             ClearXp.register(dispatcher);
+            // Clear skill lvl of a player (OP only)
+            ClearLvl.register(dispatcher);
+
         });
     }
 

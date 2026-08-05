@@ -3,7 +3,7 @@ package n1zen.eterniamod.commands.skills.admin;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import n1zen.eterniamod.commands.utils.CommandUtils;
-import n1zen.eterniamod.skills.PlayerSkillXpState;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.SkillType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -16,18 +16,18 @@ import java.util.UUID;
 
 import static n1zen.eterniamod.commands.utils.CommandUtils.validateSkillType;
 
-public class ClearXp {
+public class ClearLvl {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("skillsAdmin")
                 .requires(source -> source.permissions().hasPermission(Permissions.COMMANDS_MODERATOR))
-                .then(Commands.literal("clearXp")
+                .then(Commands.literal("clearLvl")
                         .then(Commands.argument("player", EntityArgument.player())
                                 .suggests(CommandUtils::getCompletePlayers)
                                 .then(Commands.argument("skill", StringArgumentType.word())
                                         .suggests(CommandUtils::getCompleteSkillTypes)
                                         .executes(context -> {
                                             ServerPlayer player = EntityArgument.getPlayer(context, "player");
-                                            PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
+                                            PlayerSkillLevelState playerSkillLevelState = PlayerSkillLevelState.get(player.level());
                                             String skillArgs =  StringArgumentType.getString(context, "skill");
 
                                             UUID playerUUID = player.getUUID();
@@ -35,14 +35,14 @@ public class ClearXp {
 
                                             if(skillArgs.equals("all")) {
                                                 for(SkillType skillType : SkillType.values()) {
-                                                    playerSkillXpState.removeSkillExp(playerUUID, skillType);
+                                                    playerSkillLevelState.removeSkillLevel(playerUUID, skillType);
                                                 }
-                                                String message = "Cleared all of " + playerName + "'s skill xp";
+                                                String message = "Cleared all of " + playerName + "'s skill lvls";
                                                 context.getSource().sendSuccess(
                                                         () -> Component.literal(message),
                                                         false
                                                 );
-                                                player.sendSystemMessage(Component.literal("Your skills' xp have been cleared"));
+                                                player.sendSystemMessage(Component.literal("Your skills' lvls have been cleared"));
                                                 return 1;
                                             }
 
@@ -50,8 +50,8 @@ public class ClearXp {
                                             skillType = validateSkillType(context, skillArgs);
                                             if(skillType == null) return 0;
 
-                                            playerSkillXpState.removeSkillExp(playerUUID, skillType);
-                                            String message = "Cleared " + playerName + "'s " + skillType.name() + " xp";
+                                            playerSkillLevelState.removeSkillLevel(playerUUID, skillType);
+                                            String message = "Cleared " + playerName + "'s " + skillType.name() + " lvls";
                                             context.getSource().sendSuccess(
                                                     () -> Component.literal(message),
                                                     false

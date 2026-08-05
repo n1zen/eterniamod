@@ -3,7 +3,8 @@ package n1zen.eterniamod.commands.utils;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import n1zen.eterniamod.skills.PlayerLevelState;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
+import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
@@ -14,9 +15,10 @@ import org.jspecify.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class CommandUtils {
-    public static void showAllSkills(CommandContext<CommandSourceStack> context, PlayerLevelState playerLevelState, ServerPlayer player) {
+
+    public static void showAllSkill(CommandContext<CommandSourceStack> context, PlayerSkillXpState playerSkillXpState, ServerPlayer player) {
         for(SkillType skillType : SkillType.values()) {
-            int xp = playerLevelState.getSkillExp(player.getUUID(), skillType);
+            double xp = playerSkillXpState.getSkillExp(player.getUUID(), skillType);
             String message = skillType.name() +" XP: " + xp;
             context.getSource().sendSuccess(
                     () -> Component.literal(message),
@@ -25,9 +27,29 @@ public class CommandUtils {
         }
     }
 
-    public static void showSpecificSkill(CommandContext<CommandSourceStack> context, PlayerLevelState playerLevelState, ServerPlayer player, SkillType skillType) {
-        int xp =  playerLevelState.getSkillExp(player.getUUID(), skillType);
+    public static void showAllSkill(CommandContext<CommandSourceStack> context, PlayerSkillLevelState playerSkillLevelState, ServerPlayer player) {
+        for(SkillType skillType : SkillType.values()) {
+            int lvl = playerSkillLevelState.getSkillLevel(player.getUUID(), skillType);
+            String message = skillType.name() +" Lvl: " + lvl;
+            context.getSource().sendSuccess(
+                    () -> Component.literal(message),
+                    false
+            );
+        }
+    }
+
+    public static void showSpecificSkill(CommandContext<CommandSourceStack> context, PlayerSkillXpState playerSkillXpState, ServerPlayer player, SkillType skillType) {
+        double xp =  playerSkillXpState.getSkillExp(player.getUUID(), skillType);
         String message = skillType.name() + " XP: " + xp;
+        context.getSource().sendSuccess(
+                () -> Component.literal(message),
+                false
+        );
+    }
+
+    public static void showSpecificSkill(CommandContext<CommandSourceStack> context, PlayerSkillLevelState playerSkillLevelState, ServerPlayer player, SkillType skillType) {
+        int lvl =  playerSkillLevelState.getSkillLevel(player.getUUID(), skillType);
+        String message = skillType.name() + " Lvl: " + lvl;
         context.getSource().sendSuccess(
                 () -> Component.literal(message),
                 false
@@ -55,7 +77,7 @@ public class CommandUtils {
         return builder.buildFuture();
     }
 
-    public static CompletableFuture<Suggestions> getCompleteSkills(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
+    public static CompletableFuture<Suggestions> getCompleteSkillTypes(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
         builder.suggest("all");
         for(SkillType skillType : SkillType.values()) {
             builder.suggest(skillType.name().toLowerCase());
