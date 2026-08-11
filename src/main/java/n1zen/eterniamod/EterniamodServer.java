@@ -27,6 +27,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,12 +82,36 @@ public class EterniamodServer implements DedicatedServerModInitializer {
         });
     }
 
+    private static boolean isFarmedPumpkinOrMelon(ServerLevel level, BlockPos pos) {
+        List<Block> blocks = List.of(
+                level.getBlockState(pos.north()).getBlock(),
+                level.getBlockState(pos.east()).getBlock(),
+                level.getBlockState(pos.south()).getBlock(),
+                level.getBlockState(pos.west()).getBlock()
+        );
+        for(Block block : blocks) {
+            if(block == Blocks.MELON_STEM || block == Blocks.PUMPKIN_STEM) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void BlockBreakGainXp(ServerLevel level, Player player, BlockState blockState, BlockPos pos) {
         Block brokenBlock = blockState.getBlock();
         if (PlacedBlockAttachment.isPlacedAndUnmark(level, pos)) {
             return;
         }
+
         BlockXpReward reward = BlockXpRewards.REWARDS.get(brokenBlock);
+
+        if(brokenBlock == Blocks.PUMPKIN || brokenBlock == Blocks.MELON) {
+            if (isFarmedPumpkinOrMelon(level, pos)) {
+                reward = new BlockXpReward(SkillType.FARMING, 10);
+            } else {
+                reward = new BlockXpReward(SkillType.FORAGING, 25);
+            }
+        }
 
         if (reward != null) {
             double amount = reward.amount();
