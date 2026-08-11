@@ -45,9 +45,11 @@ public class EterniamodServer implements DedicatedServerModInitializer {
 
         PlayerBlockBreakEvents.AFTER.register((level, player, blockPos, blockState, block) -> {
             if (!level.isClientSide()) {
-                BlockBreakLvlUp((ServerLevel) level, player, blockState);
+                if(player.isCreative()) {
+                    return;
+                }
+                BlockBreakGainXp((ServerLevel) level, player, blockState);
             }
-
         });
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
@@ -73,7 +75,7 @@ public class EterniamodServer implements DedicatedServerModInitializer {
         });
     }
 
-    private static void BlockBreakLvlUp(ServerLevel level, Player player, BlockState blockState) {
+    private static void BlockBreakGainXp(ServerLevel level, Player player, BlockState blockState) {
         Block brokenBlock = blockState.getBlock();
         BlockXpReward reward = BlockXpRewards.REWARDS.get(brokenBlock);
 
@@ -90,11 +92,15 @@ public class EterniamodServer implements DedicatedServerModInitializer {
 
             double xp = xpState.getSkillExp(playerUUID, skillType);
 
-            if (lvlState.levelledUp(xp, playerUUID,  skillType)) {
-                player.sendSystemMessage(
-                        Component.literal(skillType.name() + " levelled up!")
-                );
-            }
+            SkillLvlUp(player, lvlState, xp, playerUUID, skillType);
+        }
+    }
+
+    private static void SkillLvlUp(Player player, PlayerSkillLevelState lvlState, double xp, UUID playerUUID, SkillType skillType) {
+        if (lvlState.levelledUp(xp, playerUUID, skillType)) {
+            player.sendSystemMessage(
+                    Component.literal(skillType.name() + " levelled up!")
+            );
         }
     }
 
