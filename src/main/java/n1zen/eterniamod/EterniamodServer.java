@@ -1,5 +1,7 @@
 package n1zen.eterniamod;
 
+import com.mojang.serialization.Codec;
+import n1zen.eterniamod.blocks.PlacedBlockAttachment;
 import n1zen.eterniamod.commands.skills.exp.ShowAllSkillExpSelf;
 import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpOther;
 import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpSelf;
@@ -14,10 +16,14 @@ import n1zen.eterniamod.skills.SkillType;
 import n1zen.eterniamod.skills.xp.rewards.BlockXpReward;
 import n1zen.eterniamod.skills.xp.rewards.BlockXpRewards;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
+import java.util.*;
 
 import static n1zen.eterniamod.Eterniamod.MOD_ID;
 
@@ -48,7 +54,7 @@ public class EterniamodServer implements DedicatedServerModInitializer {
                 if(player.isCreative()) {
                     return;
                 }
-                BlockBreakGainXp((ServerLevel) level, player, blockState);
+                BlockBreakGainXp((ServerLevel) level, player, blockState, blockPos);
             }
         });
 
@@ -75,8 +81,11 @@ public class EterniamodServer implements DedicatedServerModInitializer {
         });
     }
 
-    private static void BlockBreakGainXp(ServerLevel level, Player player, BlockState blockState) {
+    private static void BlockBreakGainXp(ServerLevel level, Player player, BlockState blockState, BlockPos pos) {
         Block brokenBlock = blockState.getBlock();
+        if (PlacedBlockAttachment.isPlacedAndUnmark(level, pos)) {
+            return;
+        }
         BlockXpReward reward = BlockXpRewards.REWARDS.get(brokenBlock);
 
         if (reward != null) {
@@ -103,5 +112,6 @@ public class EterniamodServer implements DedicatedServerModInitializer {
             );
         }
     }
+
 
 }
