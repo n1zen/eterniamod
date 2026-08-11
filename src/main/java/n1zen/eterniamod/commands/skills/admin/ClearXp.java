@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import n1zen.eterniamod.commands.utils.CommandUtils;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.SkillType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -27,31 +28,34 @@ public class ClearXp {
                                         .suggests(CommandUtils::getCompleteSkillTypes)
                                         .executes(context -> {
                                             ServerPlayer player = EntityArgument.getPlayer(context, "player");
-                                            PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
-                                            String skillArgs =  StringArgumentType.getString(context, "skill");
+                                            PlayerSkillXpState xpState = PlayerSkillXpState.get(player.level());
+                                            PlayerSkillLevelState levelState = PlayerSkillLevelState.get(player.level());
+                                            String skillArgs = StringArgumentType.getString(context, "skill");
 
                                             UUID playerUUID = player.getUUID();
                                             String playerName = player.getName().getString();
 
-                                            if(skillArgs.equals("all")) {
-                                                for(SkillType skillType : SkillType.values()) {
-                                                    playerSkillXpState.removeSkillExp(playerUUID, skillType);
+                                            if (skillArgs.equals("all")) {
+                                                for (SkillType skillType : SkillType.values()) {
+                                                    xpState.removeSkillExp(playerUUID, skillType);
+                                                    levelState.removeSkillLevel(playerUUID, skillType);
                                                 }
-                                                String message = "Cleared all of " + playerName + "'s skill xp";
+                                                String message = "Cleared all of " + playerName + "'s skill xp and levels";
                                                 context.getSource().sendSuccess(
                                                         () -> Component.literal(message),
                                                         false
                                                 );
-                                                player.sendSystemMessage(Component.literal("Your skills' xp have been cleared"));
+                                                player.sendSystemMessage(Component.literal("Your skills' xp and levels have been cleared"));
                                                 return 1;
                                             }
 
-                                            SkillType skillType;
-                                            skillType = validateSkillType(context, skillArgs);
-                                            if(skillType == null) return 0;
+                                            SkillType skillType = validateSkillType(context, skillArgs);
+                                            if (skillType == null) return 0;
 
-                                            playerSkillXpState.removeSkillExp(playerUUID, skillType);
-                                            String message = "Cleared " + playerName + "'s " + skillType.name() + " xp";
+                                            xpState.removeSkillExp(playerUUID, skillType);
+                                            levelState.removeSkillLevel(playerUUID, skillType);
+
+                                            String message = "Cleared " + playerName + "'s " + skillType.name() + " xp and level";
                                             context.getSource().sendSuccess(
                                                     () -> Component.literal(message),
                                                     false

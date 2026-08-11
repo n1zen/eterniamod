@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import n1zen.eterniamod.commands.utils.CommandUtils;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
 import net.minecraft.commands.CommandSourceStack;
@@ -40,6 +41,7 @@ public class AddXp {
                                                         String skillArgs =  StringArgumentType.getString(context, "skill");
                                                         double amount =  DoubleArgumentType.getDouble(context, "amount");
                                                         PlayerSkillXpState playerSkillXpState = PlayerSkillXpState.get(player.level());
+                                                        PlayerSkillLevelState playerSkillLevelState = PlayerSkillLevelState.get(player.level());
 
                                                         UUID playerUUID = player.getUUID();
                                                         String playerName = player.getName().getString();
@@ -56,6 +58,8 @@ public class AddXp {
                                                                 player.sendSystemMessage(
                                                                         Component.literal(skillType.name() + " XP: " + prevXp + " -> " + xp)
                                                                 );
+
+                                                                getSkillLevel(skillType, playerSkillLevelState, playerUUID, xp, player);
                                                             }
                                                             String message = "Added " + amount + " XP to all skills of " + playerName;
                                                             context.getSource().sendSuccess(
@@ -85,6 +89,10 @@ public class AddXp {
                                                         player.sendSystemMessage(
                                                                 Component.literal(skillType.name() + " XP: " + prevXp + " -> " + xp)
                                                         );
+
+                                                        getSkillLevel(skillType, playerSkillLevelState, playerUUID, xp, player);
+
+
                                                         return 1;
 
                                                     } catch (Exception e) {
@@ -100,6 +108,19 @@ public class AddXp {
                         )
                 )
         );
+    }
+
+    private static void getSkillLevel(SkillType skillType, PlayerSkillLevelState playerSkillLevelState, UUID playerUUID, double xp, ServerPlayer player) {
+        int prevSkillLevel = playerSkillLevelState.getSkillLevel(playerUUID, skillType);
+        if (playerSkillLevelState.levelledUp(xp, playerUUID, skillType)) {
+            player.sendSystemMessage(
+                    Component.literal("Your " + skillType.name() + " Lvl has increased!")
+            );
+            int newSkillLevel = playerSkillLevelState.getSkillLevel(playerUUID, skillType);
+            player.sendSystemMessage(
+                    Component.literal(skillType.name() + " Lvl: " + prevSkillLevel + " -> " + newSkillLevel)
+            );
+        }
     }
 
 

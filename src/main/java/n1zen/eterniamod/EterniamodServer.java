@@ -1,7 +1,7 @@
 package n1zen.eterniamod;
 
-import n1zen.eterniamod.commands.skills.admin.AddLvl;
-import n1zen.eterniamod.commands.skills.admin.ClearLvl;
+import com.mojang.serialization.Codec;
+import n1zen.eterniamod.blocks.PlacedBlockAttachment;
 import n1zen.eterniamod.commands.skills.exp.ShowAllSkillExpSelf;
 import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpOther;
 import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpSelf;
@@ -10,11 +10,28 @@ import n1zen.eterniamod.commands.skills.admin.ClearXp;
 import n1zen.eterniamod.commands.skills.level.ShowAllSkillLevelSelf;
 import n1zen.eterniamod.commands.skills.level.ShowSpecificSkillLevelOther;
 import n1zen.eterniamod.commands.skills.level.ShowSpecificSkillLevelSelf;
+import n1zen.eterniamod.skills.PlayerSkillLevelState;
+import n1zen.eterniamod.skills.PlayerSkillXpState;
+import n1zen.eterniamod.skills.SkillType;
+import n1zen.eterniamod.skills.xp.rewards.BlockXpReward;
+import n1zen.eterniamod.skills.xp.rewards.BlockXpRewards;
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
+import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 import static n1zen.eterniamod.Eterniamod.MOD_ID;
 
@@ -32,6 +49,15 @@ public class EterniamodServer implements DedicatedServerModInitializer {
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> LOGGER.info("Eterniamod has been initialized!"));
 
+        PlayerBlockBreakEvents.AFTER.register((level, player, blockPos, blockState, block) -> {
+            if (!level.isClientSide()) {
+                if(player.isCreative()) {
+                    return;
+                }
+                BlockBreakGainXp((ServerLevel) level, player, blockState, blockPos);
+            }
+        });
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 
             // Show All Skills of Self
@@ -48,15 +74,44 @@ public class EterniamodServer implements DedicatedServerModInitializer {
 
             // Add XP to a player's skill (OP only)
             AddXp.register(dispatcher);
-            // Add Lvls to a player's skill (OP only)
-            AddLvl.register(dispatcher);
 
             // Clear skill xp of a player (OP only)
             ClearXp.register(dispatcher);
-            // Clear skill lvl of a player (OP only)
-            ClearLvl.register(dispatcher);
 
         });
     }
+
+    private static void BlockBreakGainXp(ServerLevel level, Player player, BlockState blockState, BlockPos pos) {
+        Block brokenBlock = blockState.getBlock();
+        if (PlacedBlockAttachment.isPlacedAndUnmark(level, pos)) {
+            return;
+        }
+        BlockXpReward reward = BlockXpRewards.REWARDS.get(brokenBlock);
+
+        if (reward != null) {
+            double amount = reward.amount();
+            SkillType skillType = reward.skill();
+
+            UUID playerUUID = player.getUUID();
+
+            PlayerSkillLevelState lvlState = PlayerSkillLevelState.get(level);
+            PlayerSkillXpState xpState = PlayerSkillXpState.get(level);
+
+            xpState.addSkillExp(playerUUID, skillType, amount);
+
+            double xp = xpState.getSkillExp(playerUUID, skillType);
+
+            SkillLvlUp(player, lvlState, xp, playerUUID, skillType);
+        }
+    }
+
+    private static void SkillLvlUp(Player player, PlayerSkillLevelState lvlState, double xp, UUID playerUUID, SkillType skillType) {
+        if (lvlState.levelledUp(xp, playerUUID, skillType)) {
+            player.sendSystemMessage(
+                    Component.literal(skillType.name() + " levelled up!")
+            );
+        }
+    }
+
 
 }

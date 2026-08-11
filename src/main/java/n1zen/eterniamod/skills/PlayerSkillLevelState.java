@@ -17,6 +17,8 @@ public class PlayerSkillLevelState extends SavedData {
 
     private Map<UUID, Map<SkillType, Integer>> skillLevelStates;
 
+    public static final int[] xpRequirements = { 0, 5, 10, 15, 20, 25 };
+
     public PlayerSkillLevelState() { this.skillLevelStates = new HashMap<>(); }
 
     public PlayerSkillLevelState(Map<UUID, Map<SkillType, Integer>> skillLevelStates) {
@@ -33,16 +35,35 @@ public class PlayerSkillLevelState extends SavedData {
         return skillLevel.getOrDefault(skill, 0);
     }
 
-    public void addSkillLevel(UUID playerUUID, SkillType skill, int level) {
-        Map<SkillType, Integer> skillLevel = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
-        skillLevel.merge(skill, level, Integer::sum);
-        setDirty();
-    }
-
     public void removeSkillLevel(UUID playerUUID, SkillType skill) {
         Map<SkillType, Integer> skillLevel = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
         skillLevel.put(skill, 0);
         setDirty();
+    }
+
+    public boolean levelledUp(double xp, UUID playerUUID, SkillType skill) {
+        Map<SkillType, Integer> skillLevelMap = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
+        int prevLevel = skillLevelMap.getOrDefault(skill, 0);
+        int actualLvl = getLvlForExp(xp);
+
+        if (actualLvl > prevLevel) {
+            skillLevelMap.put(skill, actualLvl);
+            setDirty();
+            return true;
+        }
+        return false;
+    }
+
+    public int getLvlForExp(double xp) {
+        int level = 0;
+        for (int i = 0; i < xpRequirements.length; i++) {
+            if(xp >= xpRequirements[i]) {
+                level = i;
+            } else {
+                break;
+            }
+        }
+        return level;
     }
 
     private static final Codec<SkillType> SKILL_TYPE_CODEC =
