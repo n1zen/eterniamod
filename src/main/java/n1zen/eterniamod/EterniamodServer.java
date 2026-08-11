@@ -1,7 +1,5 @@
 package n1zen.eterniamod;
 
-import n1zen.eterniamod.commands.skills.admin.AddLvl;
-import n1zen.eterniamod.commands.skills.admin.ClearLvl;
 import n1zen.eterniamod.commands.skills.exp.ShowAllSkillExpSelf;
 import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpOther;
 import n1zen.eterniamod.commands.skills.exp.ShowSpecificSkillExpSelf;
@@ -53,13 +51,9 @@ public class EterniamodServer implements DedicatedServerModInitializer {
 
             // Add XP to a player's skill (OP only)
             AddXp.register(dispatcher);
-            // Add Lvls to a player's skill (OP only)
-            AddLvl.register(dispatcher);
 
             // Clear skill xp of a player (OP only)
             ClearXp.register(dispatcher);
-            // Clear skill lvl of a player (OP only)
-            ClearLvl.register(dispatcher);
 
         });
     }

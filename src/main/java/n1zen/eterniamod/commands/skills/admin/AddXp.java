@@ -112,7 +112,7 @@ public class AddXp {
 
     private static void getSkillLevel(SkillType skillType, PlayerSkillLevelState playerSkillLevelState, UUID playerUUID, double xp, ServerPlayer player) {
         int prevSkillLevel = playerSkillLevelState.getSkillLevel(playerUUID, skillType);
-        if (playerSkillLevelState.lvledUp(xp, playerUUID, skillType)) {
+        if (playerSkillLevelState.levelledUp(xp, playerUUID, skillType)) {
             player.sendSystemMessage(
                     Component.literal("Your " + skillType.name() + " Lvl has increased!")
             );

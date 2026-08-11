@@ -35,19 +35,13 @@ public class PlayerSkillLevelState extends SavedData {
         return skillLevel.getOrDefault(skill, 0);
     }
 
-    public void addSkillLevel(UUID playerUUID, SkillType skill, int level) {
-        Map<SkillType, Integer> skillLevel = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
-        skillLevel.merge(skill, level, Integer::sum);
-        setDirty();
-    }
-
     public void removeSkillLevel(UUID playerUUID, SkillType skill) {
         Map<SkillType, Integer> skillLevel = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
         skillLevel.put(skill, 0);
         setDirty();
     }
 
-    public boolean lvledUp(double xp, UUID playerUUID, SkillType skill) {
+    public boolean levelledUp(double xp, UUID playerUUID, SkillType skill) {
         Map<SkillType, Integer> skillLevelMap = this.skillLevelStates.computeIfAbsent(playerUUID, id -> new HashMap<>());
         int prevLevel = skillLevelMap.getOrDefault(skill, 0);
         int actualLvl = getLvlForExp(xp);
