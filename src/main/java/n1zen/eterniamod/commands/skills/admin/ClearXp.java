@@ -6,6 +6,7 @@ import n1zen.eterniamod.commands.utils.CommandUtils;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.SkillType;
+import n1zen.eterniamod.skills.level.effects.CombatEffects;
 import n1zen.eterniamod.skills.level.effects.MiningEffects;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -40,9 +41,7 @@ public class ClearXp {
                                                 for (SkillType skillType : SkillType.values()) {
                                                     xpState.removeSkillExp(playerUUID, skillType);
                                                     levelState.removeSkillLevel(playerUUID, skillType);
-                                                    if(skillType.equals(SkillType.MINING)) {
-                                                        MiningEffects.applyMiningSpeedBonus(player, levelState.getLvlForExp(0.0));
-                                                    }
+                                                    CommandUtils.applySkillEffects(skillType, player, levelState, 0.0);
                                                 }
                                                 String message = "Cleared all of " + playerName + "'s skill xp and levels";
                                                 context.getSource().sendSuccess(
@@ -60,9 +59,7 @@ public class ClearXp {
                                             xpState.removeSkillExp(playerUUID, skillType);
                                             levelState.removeSkillLevel(playerUUID, skillType);
 
-                                            if(skillType.equals(SkillType.MINING)) {
-                                                MiningEffects.applyMiningSpeedBonus(player, levelState.getLvlForExp(0.0));
-                                            }
+                                            CommandUtils.applySkillEffects(skillType, player, levelState, 0.0);
 
                                             String message = "Cleared " + playerName + "'s " + skillType.name() + " xp and level";
                                             context.getSource().sendSuccess(
@@ -76,4 +73,6 @@ public class ClearXp {
                 )
         );
     }
+
+
 }

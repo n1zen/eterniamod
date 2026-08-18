@@ -6,6 +6,8 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
+import n1zen.eterniamod.skills.level.effects.CombatEffects;
+import n1zen.eterniamod.skills.level.effects.MiningEffects;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -83,5 +85,18 @@ public class CommandUtils {
             builder.suggest(skillType.name().toLowerCase());
         }
         return builder.buildFuture();
+    }
+
+    public static void applySkillEffects(SkillType skillType, ServerPlayer player, PlayerSkillLevelState levelState, double amount) {
+        switch (skillType) {
+            case MINING:
+                MiningEffects.applyMiningSpeedBonus(player, levelState.getLvlForExp(amount));
+                break;
+            case COMBAT:
+                CombatEffects.applyAttackDamageModifier(player, levelState.getLvlForExp(amount));
+                break;
+            default:
+                break;
+        }
     }
 }

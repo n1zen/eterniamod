@@ -7,6 +7,7 @@ import n1zen.eterniamod.commands.utils.CommandUtils;
 import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
+import n1zen.eterniamod.skills.level.effects.CombatEffects;
 import n1zen.eterniamod.skills.level.effects.MiningEffects;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -126,9 +127,7 @@ public class AddXp {
             );
         }
 
-        if(skillType.equals(SkillType.MINING)) {
-            MiningEffects.applyMiningSpeedBonus(player, playerSkillLevelState.getLvlForExp(xp));
-        }
+        CommandUtils.applySkillEffects(skillType, player, playerSkillLevelState, xp);
     }
 
 
