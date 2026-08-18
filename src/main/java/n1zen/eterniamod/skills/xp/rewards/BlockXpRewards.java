@@ -111,5 +111,10 @@ public class BlockXpRewards {
 
         // Cocoa
         REWARDS.put(Blocks.COCOA, new BlockXpReward(SkillType.FORAGING, 6));
+
+        // Combat
+
+        REWARDS.put(Blocks.SPAWNER, new BlockXpReward(SkillType.COMBAT, 5));
+        REWARDS.put(Blocks.TRIAL_SPAWNER, new BlockXpReward(SkillType.COMBAT, 5));
     }
 }
