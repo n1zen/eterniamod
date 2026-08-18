@@ -1,8 +1,7 @@
 package n1zen.eterniamod.skills.xp.rewards;
 
 import n1zen.eterniamod.skills.SkillType;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
+import n1zen.eterniamod.skills.xp.rewards.reward.BlockXpReward;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -58,6 +57,13 @@ public class BlockXpRewards {
 
         // Ancient Debris
         REWARDS.put(Blocks.ANCIENT_DEBRIS, new BlockXpReward(SkillType.MINING, 60));
+
+        // Farming
+
+        REWARDS.put(Blocks.WHEAT, new BlockXpReward(SkillType.FARMING, 5));
+        REWARDS.put(Blocks.POTATOES, new BlockXpReward(SkillType.FARMING, 5));
+        REWARDS.put(Blocks.CARROTS, new BlockXpReward(SkillType.FARMING, 5));
+        REWARDS.put(Blocks.BEETROOTS, new BlockXpReward(SkillType.FARMING, 5));
 
         // Foraging
 
