@@ -7,6 +7,7 @@ import n1zen.eterniamod.commands.utils.CommandUtils;
 import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
+import n1zen.eterniamod.skills.level.effects.MiningEffects;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -14,6 +15,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.Permissions;
+import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,12 +62,14 @@ public class AddXp {
                                                                 );
 
                                                                 getSkillLevel(skillType, playerSkillLevelState, playerUUID, xp, player);
+
                                                             }
                                                             String message = "Added " + amount + " XP to all skills of " + playerName;
                                                             context.getSource().sendSuccess(
                                                                     () -> Component.literal(message),
                                                                     false
                                                             );
+
                                                             return 1;
                                                         }
 
@@ -120,6 +124,10 @@ public class AddXp {
             player.sendSystemMessage(
                     Component.literal(skillType.name() + " Lvl: " + prevSkillLevel + " -> " + newSkillLevel)
             );
+        }
+
+        if(skillType.equals(SkillType.MINING)) {
+            MiningEffects.applyMiningSpeedBonus(player, playerSkillLevelState.getLvlForExp(xp));
         }
     }
 

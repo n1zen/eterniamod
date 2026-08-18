@@ -48,12 +48,12 @@ public class BlockXpRewards {
         REWARDS.put(Blocks.GOLD_BLOCK, new BlockXpReward(SkillType.MINING, 30));
 
         // Emerald
-        REWARDS.put(Blocks.EMERALD_ORE, new BlockXpReward(SkillType.MINING, 40));
-        REWARDS.put(Blocks.DEEPSLATE_EMERALD_ORE, new BlockXpReward(SkillType.MINING, 40));
+        REWARDS.put(Blocks.EMERALD_ORE, new BlockXpReward(SkillType.MINING, 35));
+        REWARDS.put(Blocks.DEEPSLATE_EMERALD_ORE, new BlockXpReward(SkillType.MINING, 35));
 
         // Diamond
-        REWARDS.put(Blocks.DIAMOND_ORE, new BlockXpReward(SkillType.MINING, 35));
-        REWARDS.put(Blocks.DEEPSLATE_DIAMOND_ORE, new BlockXpReward(SkillType.MINING, 35));
+        REWARDS.put(Blocks.DIAMOND_ORE, new BlockXpReward(SkillType.MINING, 45));
+        REWARDS.put(Blocks.DEEPSLATE_DIAMOND_ORE, new BlockXpReward(SkillType.MINING, 45));
 
         // Ancient Debris
         REWARDS.put(Blocks.ANCIENT_DEBRIS, new BlockXpReward(SkillType.MINING, 60));
@@ -77,8 +77,8 @@ public class BlockXpRewards {
         REWARDS.put(Blocks.MANGROVE_LOG, new BlockXpReward(SkillType.FORAGING, 5));
         REWARDS.put(Blocks.SPRUCE_LOG, new BlockXpReward(SkillType.FORAGING, 5));
         REWARDS.put(Blocks.PALE_OAK_LOG, new BlockXpReward(SkillType.FORAGING, 5));
-        REWARDS.put(Blocks.CRIMSON_STEM, new BlockXpReward(SkillType.FORAGING, 20));
-        REWARDS.put(Blocks.WARPED_STEM, new BlockXpReward(SkillType.FORAGING, 20));
+        REWARDS.put(Blocks.CRIMSON_STEM, new BlockXpReward(SkillType.FORAGING, 10));
+        REWARDS.put(Blocks.WARPED_STEM, new BlockXpReward(SkillType.FORAGING, 10));
 
         // Mushrooms
         REWARDS.put(Blocks.MUSHROOM_STEM, new BlockXpReward(SkillType.FORAGING, 10));
@@ -114,7 +114,7 @@ public class BlockXpRewards {
 
         // Combat
 
-        REWARDS.put(Blocks.SPAWNER, new BlockXpReward(SkillType.COMBAT, 5));
-        REWARDS.put(Blocks.TRIAL_SPAWNER, new BlockXpReward(SkillType.COMBAT, 5));
+        REWARDS.put(Blocks.SPAWNER, new BlockXpReward(SkillType.COMBAT, 50));
+        REWARDS.put(Blocks.TRIAL_SPAWNER, new BlockXpReward(SkillType.COMBAT, 70));
     }
 }

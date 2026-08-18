@@ -12,6 +12,7 @@ import n1zen.eterniamod.commands.skills.level.ShowSpecificSkillLevelSelf;
 import n1zen.eterniamod.skills.PlayerSkillLevelState;
 import n1zen.eterniamod.skills.PlayerSkillXpState;
 import n1zen.eterniamod.skills.SkillType;
+import n1zen.eterniamod.skills.level.effects.MiningEffects;
 import n1zen.eterniamod.skills.xp.rewards.reward.BlockXpReward;
 import n1zen.eterniamod.skills.xp.rewards.BlockXpRewards;
 import n1zen.eterniamod.skills.xp.rewards.reward.EntityXpReward;
@@ -19,6 +20,7 @@ import n1zen.eterniamod.skills.xp.rewards.EntityXpRewards;
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
@@ -27,10 +29,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +56,12 @@ public class EterniamodServer implements DedicatedServerModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(server -> LOGGER.info("Eterniamod initializing..."));
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> LOGGER.info("Eterniamod has been initialized!"));
+
+        ServerPlayerEvents.JOIN.register(player -> {
+           PlayerSkillLevelState lvlState = PlayerSkillLevelState.get(player.level());
+           int miningLvl = lvlState.getSkillLevel(player.getUUID(), SkillType.MINING);
+           MiningEffects.applyMiningSpeedBonus(player, miningLvl);
+        });
 
         PlayerBlockBreakEvents.AFTER.register((level, player, blockPos, blockState, block) -> {
             if (!level.isClientSide()) {
@@ -183,6 +194,10 @@ public class EterniamodServer implements DedicatedServerModInitializer {
             player.sendSystemMessage(
                     Component.literal(skillType.name() + " levelled up!")
             );
+
+            if(skillType == SkillType.MINING) {
+                MiningEffects.applyMiningSpeedBonus((ServerPlayer) player, lvlState.getLvlForExp(xp));
+            }
         }
     }
 
